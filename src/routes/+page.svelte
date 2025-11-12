@@ -1,10 +1,23 @@
 <script>
-  let todoText = "";
+  import { v4 as uuidv4 } from "uuid";
+  let todoText = $state("");
   let todoItems = $state([]);
+  let doneItems = $state([]);
 
   function addTodo() {
-    console.log(todoText);
-    todoItems.push(todoText);
+    const todo = {
+      _id: uuidv4(),
+      text: todoText,
+      date: new Date().toLocaleString("en-IE")
+    };
+
+    todoItems.push(todo);
+    todoText = "";
+  }
+
+  function deleteTodo(id) {
+    doneItems.push(todoItems.find((todo) => todo._id === id));
+    todoItems = todoItems.filter((todo) => todo._id !== id);
   }
 </script>
 
@@ -41,13 +54,39 @@
     <table class="table is-fullwidth">
       <thead>
         <tr>
-          <th>Task</th>
+          <th>TASK</th>
+          <th>DATE</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
-        {#each todoItems as todo (todo)}
+        {#each todoItems as todo (todo._id)}
           <tr>
-            <td>{todo}</td>
+            <td>{todo.text}</td>
+            <td>{todo.date}</td>
+            <td>
+              <button class="button" onclick={() => deleteTodo(todo._id)}>Delete</button>
+            </td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section box">
+    <div class="title is-6">Things done</div>
+    <table class="table is-fullwidth">
+      <thead>
+        <tr>
+          <th>TASK</th>
+          <th>DATE</th>
+        </tr>
+      </thead>
+      <tbody>
+        {#each doneItems as todo (todo._id)}
+          <tr>
+            <td>{todo.text}</td>
+            <td>{todo.date}</td>
           </tr>
         {/each}
       </tbody>
